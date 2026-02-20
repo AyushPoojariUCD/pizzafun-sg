@@ -121,10 +121,25 @@ export default function OrdersPage() {
                 </button>
 
                 <button
-                  className="bg-green-600 px-6 py-3 rounded hover:bg-green-700"
-                >
-                  Checkout
-                </button>
+  onClick={async () => {
+
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ items }),
+    });
+
+    const data = await res.json();
+
+    window.location.href = data.url;
+
+  }}
+  className="bg-green-600 px-6 py-3 rounded hover:bg-green-700"
+>
+  Checkout
+</button>
 
               </div>
             </>
