@@ -1,8 +1,27 @@
 import Image from "next/image";
 
-export default function MenuSection({ category }) {
+export default function MenuSection({ category, filters }) {
 
   if (!category) return null;
+
+  const filteredItems = category.items?.filter(item => {
+
+    if (!filters?.veg && !filters?.nonveg && !filters?.spicy)
+      return true;
+
+    if (filters.veg && item.type === "veg")
+      return true;
+
+    if (filters.nonveg && item.type === "nonveg")
+      return true;
+
+    if (filters.spicy && item.spicy)
+      return true;
+
+    return false;
+  });
+
+  if (!filteredItems?.length) return null;
 
   return (
     <section id={category.id} className="mb-20">
@@ -13,7 +32,7 @@ export default function MenuSection({ category }) {
 
       <div className="grid md:grid-cols-2 gap-10">
 
-        {category.items?.map((item) => (
+        {filteredItems.map(item => (
 
           <div
             key={item.code}
@@ -36,17 +55,17 @@ export default function MenuSection({ category }) {
 
             </div>
 
-            <div className="w-[110px] h-[110px] rounded-xl overflow-hidden bg-white flex items-center justify-center">
+            <div className="w-[110px] h-[110px] rounded-xl overflow-hidden bg-white">
 
-  <Image
-    src={item.image}
-    alt={item.name}
-    width={110}
-    height={110}
-    className="object-cover w-full h-full"
-  />
+              <Image
+                src={item.image}
+                alt={item.name}
+                width={110}
+                height={110}
+                className="object-cover w-full h-full"
+              />
 
-</div>
+            </div>
 
           </div>
 
