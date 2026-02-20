@@ -24,7 +24,7 @@ export default function MenuPage() {
 
       <Header />
 
-      <div className="relative min-h-screen text-white">
+      <div className="bg-white/10 relative min-h-screen text-white">
 
         {/* Background */}
         <div

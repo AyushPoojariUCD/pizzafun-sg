@@ -15,11 +15,10 @@ import {
 } from "lucide-react";
 
 export default function Header() {
-
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // reusable nav style
+  // desktop active link style
   const navLink = (path: string) =>
     `transition ${
       pathname === path || pathname.startsWith(path + "/")
@@ -27,8 +26,9 @@ export default function Header() {
         : "text-white hover:text-yellow-300"
     }`;
 
+  // mobile active link style
   const mobileNavLink = (path: string) =>
-    `transition ${
+    `transition text-lg ${
       pathname === path || pathname.startsWith(path + "/")
         ? "text-yellow-400 font-semibold"
         : "text-white hover:text-yellow-300"
@@ -51,32 +51,11 @@ export default function Header() {
           />
         </Link>
 
-        {/* Desktop Search */}
-        <div className="hidden md:flex items-center bg-gray-100 rounded-full overflow-hidden border">
-
-          <select className="bg-transparent px-3 py-2 outline-none text-sm">
-            <option>All categories</option>
-            <option>Veg Pizza</option>
-            <option>Non-Veg Pizza</option>
-            <option>Burger</option>
-          </select>
-
-          <input
-            type="text"
-            placeholder="Search..."
-            className="px-3 py-2 bg-transparent outline-none w-48 lg:w-64 text-sm"
-          />
-
-          <button className="bg-yellow-400 px-4 lg:px-6 py-2 font-semibold hover:bg-yellow-500 transition text-sm">
-            SEARCH
-          </button>
-        </div>
-
-        {/* Contact */}
+        {/* Contact info desktop */}
         <div className="hidden lg:flex items-center gap-6">
 
           <div className="flex flex-col text-sm">
-            <div className="flex items-center gap-2 font-semibold">
+            <div className="flex items-center gap-2 font-semibold text-black">
               <Phone size={16} />
               +65 8184 3454
             </div>
@@ -93,9 +72,10 @@ export default function Header() {
             width={60}
             height={60}
           />
+
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile menu button */}
         <button
           onClick={() => setOpen(!open)}
           className="md:hidden text-gray-800"
@@ -105,13 +85,18 @@ export default function Header() {
 
       </div>
 
+
       {/* NAVBAR */}
       <div className="bg-gradient-to-r from-gray-800 to-gray-700 px-4 sm:px-6 py-3">
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center justify-between">
+        {/* Desktop Navbar */}
+        <div className="hidden md:grid grid-cols-3 items-center">
 
-          <nav className="flex gap-8 font-semibold">
+          {/* Left empty space */}
+          <div />
+
+          {/* Center Menu */}
+          <nav className="flex justify-center gap-10 font-semibold text-lg">
 
             <Link href="/" className={navLink("/")}>
               HOME
@@ -121,9 +106,14 @@ export default function Header() {
               MENU
             </Link>
 
+            <Link href="/contact" className={navLink("/contact")}>
+              CONTACT
+            </Link>
+
           </nav>
 
-          <div className="flex items-center gap-4">
+          {/* Right Social + Login */}
+          <div className="flex justify-end items-center gap-5">
 
             <Facebook className="text-white hover:text-yellow-400 cursor-pointer transition" />
 
@@ -142,9 +132,10 @@ export default function Header() {
 
         </div>
 
-        {/* Mobile Nav */}
+
+        {/* Mobile Menu */}
         {open && (
-          <div className="md:hidden flex flex-col gap-4 mt-4">
+          <div className="md:hidden flex flex-col gap-4 mt-4 pb-4 border-t border-gray-600">
 
             <Link
               href="/"
@@ -163,14 +154,23 @@ export default function Header() {
             </Link>
 
             <Link
+              href="/contact"
+              className={mobileNavLink("/contact")}
+              onClick={() => setOpen(false)}
+            >
+              CONTACT
+            </Link>
+
+
+            <Link
               href="/login"
               className={mobileNavLink("/login")}
               onClick={() => setOpen(false)}
             >
-              Login
+              LOGIN
             </Link>
 
-            <div className="flex gap-4 mt-2 text-white">
+            <div className="flex gap-4 mt-3 text-white">
               <Facebook />
               <Instagram />
             </div>
