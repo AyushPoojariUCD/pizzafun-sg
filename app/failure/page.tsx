@@ -6,6 +6,7 @@ import { XCircle } from "lucide-react";
 export default function PaymentFailedPage() {
 
   return (
+
     <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-6">
 
       <XCircle
@@ -18,7 +19,7 @@ export default function PaymentFailedPage() {
       </h1>
 
       <p className="text-gray-400 mb-8 text-center">
-        Your payment was not completed or was cancelled.
+        Your payment was cancelled or failed.
       </p>
 
       <div className="flex gap-4">
@@ -38,5 +39,7 @@ export default function PaymentFailedPage() {
       </div>
 
     </div>
+
   );
+
 }

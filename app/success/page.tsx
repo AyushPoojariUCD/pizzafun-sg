@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { CheckCircle } from "lucide-react";
 
@@ -11,73 +11,124 @@ export default function SuccessPage() {
   const params = useSearchParams();
   const router = useRouter();
 
-  const clearCart = useCartStore((s) => s.clearCart);
+  const clearCart =
+    useCartStore((s) => s.clearCart);
 
-  const [loading, setLoading] = useState(true);
-  const [verified, setVerified] = useState(false);
+  const [loading, setLoading] =
+    useState(true);
+
+  const [verified, setVerified] =
+    useState(false);
+
+  const verifiedRef =
+    useRef(false);
+
 
   useEffect(() => {
 
-    const session_id = params.get("session_id");
+    if (verifiedRef.current)
+      return;
 
-    // If user manually visits page → redirect
-    if (!session_id) {
+    const session_id =
+      params.get("session_id");
+
+
+    /*
+      Prevent manual access
+    */
+    if (
+      !session_id ||
+      typeof session_id !== "string" ||
+      (!session_id.startsWith("cs_test_") &&
+       !session_id.startsWith("cs_live_"))
+    ) {
+
       router.replace("/orders");
       return;
+
     }
 
-    const verifyPayment = async () => {
 
-      try {
+    const verifyPayment =
+      async () => {
 
-        const res = await fetch("/api/verify-session", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ session_id }),
-        });
+        try {
 
-        const data = await res.json();
+          const res =
+            await fetch(
+              "/api/verify-session",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type":
+                    "application/json",
+                },
+                body: JSON.stringify({
+                  session_id,
+                }),
+              }
+            );
 
-        if (data.valid) {
 
-          clearCart();
-          setVerified(true);
+          if (!res.ok)
+            throw new Error();
 
-        } else {
+
+          const data =
+            await res.json();
+
+
+          if (data.valid === true) {
+
+            clearCart();
+
+            verifiedRef.current =
+              true;
+
+            setVerified(true);
+
+          }
+          else {
+
+            router.replace("/orders");
+
+          }
+
+        }
+        catch {
 
           router.replace("/orders");
 
         }
+        finally {
 
-      } catch {
+          setLoading(false);
 
-        router.replace("/orders");
+        }
 
-      } finally {
+      };
 
-        setLoading(false);
-
-      }
-
-    };
 
     verifyPayment();
 
-  }, [params, router, clearCart]);
+  },
+  [params, router, clearCart]);
 
-  if (loading) {
+
+  if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
         Verifying payment...
       </div>
     );
-  }
 
-  if (!verified) return null;
+
+  if (!verified)
+    return null;
+
 
   return (
+
     <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-6">
 
       <CheckCircle
@@ -110,5 +161,7 @@ export default function SuccessPage() {
       </div>
 
     </div>
+
   );
+
 }
