@@ -1,3 +1,4 @@
+import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 
 export default function MenuPage() {
@@ -5,6 +6,7 @@ export default function MenuPage() {
         <main>
             {/*Header Component*/}
             <Header/>
+            <Footer/>
         </main>
     )
 }
