@@ -9,16 +9,22 @@ import {
   Mail,
   Facebook,
   Instagram,
-  User,
+  ShoppingCart,
   Menu,
   X,
 } from "lucide-react";
 
+import { useCartStore } from "@/store/cartStore";
+
 export default function Header() {
+
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // desktop active link style
+  const items = useCartStore((state) => state.items);
+  const openCart = useCartStore((state) => state.openCart);
+
+  // desktop active link
   const navLink = (path: string) =>
     `transition ${
       pathname === path || pathname.startsWith(path + "/")
@@ -26,7 +32,7 @@ export default function Header() {
         : "text-white hover:text-yellow-300"
     }`;
 
-  // mobile active link style
+  // mobile active link
   const mobileNavLink = (path: string) =>
     `transition text-lg ${
       pathname === path || pathname.startsWith(path + "/")
@@ -51,7 +57,7 @@ export default function Header() {
           />
         </Link>
 
-        {/* Contact info desktop */}
+        {/* Contact Desktop */}
         <div className="hidden lg:flex items-center gap-6">
 
           <div className="flex flex-col text-sm">
@@ -72,10 +78,9 @@ export default function Header() {
             width={60}
             height={60}
           />
-
         </div>
 
-        {/* Mobile menu button */}
+        {/* Mobile Menu Button */}
         <button
           onClick={() => setOpen(!open)}
           className="md:hidden text-gray-800"
@@ -85,17 +90,16 @@ export default function Header() {
 
       </div>
 
-
       {/* NAVBAR */}
       <div className="bg-gradient-to-r from-gray-800 to-gray-700 px-4 sm:px-6 py-3">
 
-        {/* Desktop Navbar */}
+        {/* Desktop */}
         <div className="hidden md:grid grid-cols-3 items-center">
 
-          {/* Left empty space */}
+          {/* Left empty */}
           <div />
 
-          {/* Center Menu */}
+          {/* Center Nav */}
           <nav className="flex justify-center gap-10 font-semibold text-lg">
 
             <Link href="/" className={navLink("/")}>
@@ -110,16 +114,32 @@ export default function Header() {
               CONTACT
             </Link>
 
+            <Link href="/orders" className={navLink("/orders")}>
+              ORDERS
+            </Link>
+
           </nav>
 
-          {/* Right Social + Login */}
+          {/* Right Icons */}
           <div className="flex justify-end items-center gap-5">
 
             <Facebook className="text-white hover:text-yellow-400 cursor-pointer transition" />
 
             <Instagram className="text-white hover:text-yellow-400 cursor-pointer transition" />
 
-            <User className="text-white hover:text-yellow-400 cursor-pointer transition" />
+            {/* CART ICON */}
+            <button
+              onClick={openCart}
+              className="relative"
+            >
+              <ShoppingCart className="text-white hover:text-yellow-400 transition" />
+
+              {items.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs px-2 rounded-full">
+                  {items.length}
+                </span>
+              )}
+            </button>
 
             <Link
               href="/login"
@@ -131,7 +151,6 @@ export default function Header() {
           </div>
 
         </div>
-
 
         {/* Mobile Menu */}
         {open && (
@@ -161,6 +180,13 @@ export default function Header() {
               CONTACT
             </Link>
 
+            <Link
+              href="/orders"
+              className={mobileNavLink("/orders")}
+              onClick={() => setOpen(false)}
+            >
+              ORDERS
+            </Link>
 
             <Link
               href="/login"
@@ -170,10 +196,17 @@ export default function Header() {
               LOGIN
             </Link>
 
-            <div className="flex gap-4 mt-3 text-white">
-              <Facebook />
-              <Instagram />
-            </div>
+            {/* Mobile Cart */}
+            <button
+              onClick={() => {
+                setOpen(false);
+                openCart();
+              }}
+              className="flex items-center gap-2 text-white"
+            >
+              <ShoppingCart />
+              Cart ({items.length})
+            </button>
 
           </div>
         )}
