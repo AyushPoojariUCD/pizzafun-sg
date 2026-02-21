@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Order {
+  id                    String  @id @default(cuid())
+  stripeSessionId       String  @unique
+  stripePaymentIntentId String?
+
+  amount   Int
+  currency String
+  status   String
+
+  customerEmail String?
+
+  createdAt DateTime @default(now())
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+
+  name     String
+  code     String
+  price    Int
+  quantity Int
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+}
